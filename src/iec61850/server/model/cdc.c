@@ -35,14 +35,14 @@ DataAttribute*
 CAC_AnalogueValue_create(const char* name, ModelNode* parent, FunctionalConstraint fc, uint8_t triggerOptions,
         bool isIntegerNotFloat)
 {
-    DataAttribute* analogeValue = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, fc, triggerOptions, 0, 0);
+    DataAttribute* analogueValue = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, fc, triggerOptions, 0, 0);
 
     if (isIntegerNotFloat)
-        DataAttribute_create("i", (ModelNode*) analogeValue, IEC61850_INT32, fc, triggerOptions, 0, 0);
+		DataAttribute_create("i", (ModelNode*) analogueValue, IEC61850_INT32, fc, triggerOptions, 0, 0);
     else
-        DataAttribute_create("f", (ModelNode*) analogeValue, IEC61850_FLOAT32, fc, triggerOptions, 0, 0);
+		DataAttribute_create("f", (ModelNode*) analogueValue, IEC61850_FLOAT32, fc, triggerOptions, 0, 0);
 
-    return analogeValue;
+	return analogueValue;
 }
 
 DataAttribute*
@@ -415,6 +415,26 @@ CDC_MV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, b
     if (options & CDC_OPTION_RANGE)
         DataAttribute_create("range", (ModelNode*) newMV, IEC61850_ENUMERATED, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, 0, 0);
 
+	if (options & CDC_OPTION_RANGE_C)
+	{
+		DataAttribute* rangeCfg = DataAttribute_create("rangeC", (ModelNode*)newMV, IEC61850_CONSTRUCTED, IEC61850_FC_CF, 0, 0, 0);
+		CAC_AnalogueValue_create("hhLim", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+		CAC_AnalogueValue_create("hLim", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+		CAC_AnalogueValue_create("lLim", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+		CAC_AnalogueValue_create("llLim", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+		CAC_AnalogueValue_create("min", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+		CAC_AnalogueValue_create("max", (ModelNode*)rangeCfg, IEC61850_FC_CF, 0, false);
+	}
+	
+	if (options & CDC_OPTION_DB)
+		DataAttribute_create("db", (ModelNode*)newMV, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
+	
+	if (options & CDC_OPTION_ZERODB)
+		DataAttribute_create("zeroDb", (ModelNode*)newMV, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
+	
+	if (options & CDC_OPTION_UNIT)
+		CAC_Unit_create("units", (ModelNode*)newMV, options & CDC_OPTION_UNIT_MULTIPLIER);
+	
     CDC_addTimeQuality(newMV, IEC61850_FC_MX);
 
 //    if (options & CDC_OPTION_PICS_SUBST)
@@ -455,6 +475,59 @@ CDC_CMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
     return newMV;
 }
 
+DataObject*
+CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isFloatNotComplex, int size)
+{
+	options = options;
+	DataObject* newHMV = DataObject_create(dataObjectName, parent, 0);
+
+	DataAttribute* har = DataAttribute_create("har", (ModelNode*)newHMV, IEC61850_CONSTRUCTED, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, size, 0);
+	CAC_AnalogueValue_create("mag", (ModelNode*)har, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, false);
+	if (!isFloatNotComplex)
+		CAC_AnalogueValue_create("ang", (ModelNode*)har, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, false);
+
+	DataAttribute* numHar = DataAttribute_create("numHar", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+	numHar->mmsValue = MmsValue_newIntegerFromInt16(size);
+
+	DataAttribute_create("rmsCyc", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+	DataAttribute_create("frequency", (ModelNode*)newHMV, IEC61850_FLOAT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+
+	CDC_addTimeQuality(newHMV, IEC61850_FC_MX);
+
+	//    if (options & CDC_OPTION_PICS_SUBST)
+	//        CDC_addOptionPicsSubst(newHMV, )
+
+	CDC_addStandardOptions(newHMV, options);
+
+	return newHMV;
+}
+
+DataObject*
+CDC_CSD_create(const char* dataObjectName, ModelNode* parent, uint32_t options, int size)
+{
+	options = options;
+	DataObject* newCSD = DataObject_create(dataObjectName, parent, 0);
+
+	CAC_Unit_create("xUnit", (ModelNode*)newCSD, options & CDC_OPTION_UNIT_MULTIPLIER);
+	CAC_Unit_create("yUnit", (ModelNode*)newCSD, options & CDC_OPTION_UNIT_MULTIPLIER);
+
+	DataAttribute_create("xD", (ModelNode*)newCSD, IEC61850_VISIBLE_STRING_255, IEC61850_FC_DC, 0, 0, 0);
+	DataAttribute_create("yD", (ModelNode*)newCSD, IEC61850_VISIBLE_STRING_255, IEC61850_FC_DC, 0, 0, 0);
+	
+	DataAttribute* numPts = DataAttribute_create("numPts", (ModelNode*)newCSD, IEC61850_INT16U, IEC61850_FC_DC, 0, 0, 0);
+	numPts->mmsValue = MmsValue_newIntegerFromInt16(size);
+
+	DataAttribute* crvPts = DataAttribute_create("crvPts", (ModelNode*)newCSD, IEC61850_CONSTRUCTED, IEC61850_FC_DC, 0, size, 0);
+	DataAttribute_create("xVal", (ModelNode*)crvPts, IEC61850_FLOAT32, IEC61850_FC_DC, 0, 0, 0);
+	DataAttribute_create("yVal", (ModelNode*)crvPts, IEC61850_FLOAT32, IEC61850_FC_DC, 0, 0, 0);
+
+	// if (options & CDC_OPTION_PICS_SUBST)
+	//    CDC_addOptionPicsSubst(newCSD, )
+
+	CDC_addStandardOptions(newCSD, options);
+
+	return newCSD;
+}
 
 /**
  * CDC_OPTION_UNIT
@@ -983,13 +1056,13 @@ CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
         CAC_Unit_create("units", (ModelNode*) newING, options & CDC_OPTION_UNIT_MULTIPLIER);
 
     if (options & CDC_OPTION_MIN)
-        DataAttribute_create("minVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+		DataAttribute_create("minVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
 
     if (options & CDC_OPTION_MAX)
-        DataAttribute_create("maxVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+		DataAttribute_create("maxVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
 
     if (options & CDC_OPTION_STEP_SIZE)
-        DataAttribute_create("stepSize", (ModelNode*) newING, IEC61850_INT32U, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+		DataAttribute_create("stepSize", (ModelNode*) newING, IEC61850_INT32U, IEC61850_FC_CF, 0, 0, 0);
 
     CDC_addStandardOptions(newING, options);
 

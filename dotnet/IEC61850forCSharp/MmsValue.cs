@@ -136,7 +136,25 @@ namespace IEC61850
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             static extern IntPtr MmsValue_newVisibleString(string value);
 
-			[DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern void MmsValue_setVisibleString(IntPtr self, string value);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern IntPtr MmsValue_newVisibleStringWithSize(UInt32 integer);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern IntPtr MmsValue_newMmsString(ref IntPtr value);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern void MmsValue_setMmsString(IntPtr self, string value);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern IntPtr MmsValue_newMmsStringWithSize(UInt32 integer);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern int MmsValue_getStringSize(IntPtr self);
+            
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
 			static extern IntPtr MmsValue_createArray(IntPtr elementType, int size);
 
 			[DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
@@ -243,6 +261,66 @@ namespace IEC61850
                 valueReference = MmsValue_newVisibleString(value);
             }
 
+            /// <summary>
+            /// Create a new <see cref="IEC61850.Common.MmsValue"/> instance of type MMS_STRING.
+            /// </summary>
+            /// <param name="value">Value.</param>
+            public static MmsValue NewMmsString(ref IntPtr value)
+            {
+                IntPtr newValue = MmsValue_newMmsString(ref value);
+                return new MmsValue(newValue, true);
+            }
+
+            public void SetMmsString(string value)
+            {
+                if (GetType() == MmsType.MMS_STRING)
+                {
+                    MmsValue_setMmsString(valueReference, Encoding.Default.GetString(Encoding.UTF8.GetBytes(value)));
+                }
+                else
+                    throw new MmsValueException("Operation not supported for this type");
+            }
+
+            /// <summary>
+            /// Create a new <see cref="IEC61850.Common.MmsValue"/> instance of type MMS_VISIBLE_STRING.
+            /// </summary>
+            /// <param name="value">Value.</param>
+            public static MmsValue NewVisibleString(string value)
+            {
+                IntPtr newValue = MmsValue_newVisibleString(value);
+                return new MmsValue(newValue, true);
+            }
+
+            /// <summary>
+            /// Create a new <see cref="IEC61850.Common.MmsValue"/> instance of type MMS_STRING with limited maximum size
+            /// </summary>
+            /// <param name="value">Value.</param>
+            public static MmsValue NewMmsStringWithSize(uint size)
+            {
+                IntPtr newValue = MmsValue_newMmsStringWithSize(size);
+                return new MmsValue(newValue, true);
+            }
+
+            /// <summary>
+            /// Create a new <see cref="IEC61850.Common.MmsValue"/> instance of type MMS_VISIBLE_STRING with limited maximum size
+            /// </summary>
+            /// <param name="value">Value.</param>
+            public static MmsValue NewVisibleStringWithSize(uint size)
+            {
+                IntPtr newValue = MmsValue_newMmsStringWithSize(size);
+                return new MmsValue(newValue, true);
+            }
+
+            public void SetVisibleString(string value)
+            {
+                if (GetType() == MmsType.MMS_VISIBLE_STRING)
+                {
+                    MmsValue_setVisibleString(valueReference, value);
+                }
+                else
+                    throw new MmsValueException("Operation not supported for this type");
+            }
+
             public void Dispose()
             {
                 lock (this) {
@@ -303,7 +381,7 @@ namespace IEC61850
 
 				valueReference = MmsValue_newOctetString(octetString.Length, octetString.Length);
 
-				this.setOctetString (octetString);
+				this.SetOctetString (octetString);
 			}
 
 			/// <summary>
@@ -436,7 +514,11 @@ namespace IEC61850
 				else if (GetType () == MmsType.MMS_OCTET_STRING) {
 					return MmsValue_getOctetStringSize(valueReference);
 				}
-				else
+                else if ((GetType() == MmsType.MMS_STRING) || (GetType() == MmsType.MMS_VISIBLE_STRING))
+                {
+                    return MmsValue_getStringSize(valueReference);
+                }
+                else
 					throw new MmsValueException ("Operation not supported for this type");
 			}
 
@@ -451,7 +533,7 @@ namespace IEC61850
 				if (GetType () == MmsType.MMS_OCTET_STRING) {
 					return MmsValue_getOctetStringMaxSize(valueReference);
 				}
-				else
+                else
 					throw new MmsValueException ("Operation not supported for this type");
 			}
 
@@ -480,7 +562,7 @@ namespace IEC61850
 					throw new MmsValueException ("Operation not supported for this type");
 			}
 
-			public void setOctetString (byte[] octetString)
+			public void SetOctetString (byte[] octetString)
 			{
 				if (GetType () == MmsType.MMS_OCTET_STRING) {
 

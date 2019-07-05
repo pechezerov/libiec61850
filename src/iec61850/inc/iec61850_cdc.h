@@ -107,6 +107,11 @@ extern "C" {
 #define CDC_OPTION_AC_LN0_EX (1 << 25)
 #define CDC_OPTION_AC_DLD_M (1 << 26)
 
+/** Optional MV attributes */
+#define CDC_OPTION_RANGE_C (1 << 27)		
+#define CDC_OPTION_DB (1 << 28)
+#define CDC_OPTION_ZERODB (1 << 29)
+	
 /**
  * \brief Control model types
  */
@@ -232,6 +237,12 @@ CDC_MV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, b
 DataObject*
 CDC_CMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
 
+DataObject*
+CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isFloatNotComplex, int size);
+	
+DataObject*
+CDC_CSD_create(const char* dataObjectName, ModelNode* parent, uint32_t options, int size);
+	
 /**
  * \brief create a new SAV (Sampled analog value) CDC instance (data object)
  *

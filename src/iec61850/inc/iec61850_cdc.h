@@ -218,6 +218,9 @@ CDC_SEC_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  * possible options:
  *   CDC_OPTION_INST_MAG
  *   CDC_OPTION_RANGE
+ *   CDC_OPTION_RANGE_C
+ *   CDC_OPTION_DB
+ *   CDC_OPTION_ZERODB
  *   CDC_OPTION_PICS_SUBST
  *   standard (include standard optional elements like extension namespaces and descriptions (d, dU).
  *
@@ -238,7 +241,7 @@ DataObject*
 CDC_CMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
 
 DataObject*
-CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isFloatNotComplex, int size);
+CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool magnitudeOnly, int size);
 	
 DataObject*
 CDC_CSD_create(const char* dataObjectName, ModelNode* parent, uint32_t options, int size);

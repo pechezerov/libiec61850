@@ -91,10 +91,10 @@ CAC_Point_create(const char* name, ModelNode* parent, FunctionalConstraint fc, u
 DataAttribute*
 CAC_ScaledValueConfig_create(const char* name, ModelNode* parent)
 {
-    DataAttribute* scaling = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute* scaling = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, IEC61850_FC_CF, 0, 0, 0);
 
-    DataAttribute_create("scaleFactor", (ModelNode*) scaling, IEC61850_FLOAT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
-    DataAttribute_create("offset", (ModelNode*) scaling, IEC61850_FLOAT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute_create("scaleFactor", (ModelNode*) scaling, IEC61850_FLOAT32, IEC61850_FC_CF, 0, 0, 0);
+    DataAttribute_create("offset", (ModelNode*) scaling, IEC61850_FLOAT32, IEC61850_FC_CF, 0, 0, 0);
 
     return scaling;
 }
@@ -102,12 +102,12 @@ CAC_ScaledValueConfig_create(const char* name, ModelNode* parent)
 DataAttribute*
 CAC_Unit_create(const char* name, ModelNode* parent, bool hasMagnitude)
 {
-    DataAttribute* unit = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute* unit = DataAttribute_create(name, parent, IEC61850_CONSTRUCTED, IEC61850_FC_CF, 0, 0, 0);
 
-    DataAttribute_create("SIUnit", (ModelNode*) unit, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute_create("SIUnit", (ModelNode*) unit, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     if (hasMagnitude)
-        DataAttribute_create("multiplier", (ModelNode*) unit, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+        DataAttribute_create("multiplier", (ModelNode*) unit, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     return unit;
 }
@@ -342,15 +342,15 @@ CDC_BCR_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
     CDC_addTimeQuality(newBCR, IEC61850_FC_ST);
 
     if (options & CDC_OPTION_UNIT)
-        DataAttribute_create("units", (ModelNode*) newBCR, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+        DataAttribute_create("units", (ModelNode*) newBCR, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
-    DataAttribute_create("pulsQty", (ModelNode*) newBCR, IEC61850_FLOAT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute_create("pulsQty", (ModelNode*) newBCR, IEC61850_FLOAT32, IEC61850_FC_CF, 0, 0, 0);
 
     if (options & CDC_OPTION_FROZEN_VALUE) {
-        DataAttribute_create("frEna", (ModelNode*) newBCR, IEC61850_BOOLEAN, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
-        DataAttribute_create("strTm", (ModelNode*) newBCR, IEC61850_TIMESTAMP, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
-        DataAttribute_create("frPd", (ModelNode*) newBCR, IEC61850_INT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
-        DataAttribute_create("frRs", (ModelNode*) newBCR, IEC61850_BOOLEAN, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+        DataAttribute_create("frEna", (ModelNode*) newBCR, IEC61850_BOOLEAN, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("strTm", (ModelNode*) newBCR, IEC61850_TIMESTAMP, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("frPd", (ModelNode*) newBCR, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("frRs", (ModelNode*) newBCR, IEC61850_BOOLEAN, IEC61850_FC_CF, 0, 0, 0);
     }
 
     CDC_addStandardOptions(newBCR, options);
@@ -476,21 +476,21 @@ CDC_CMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 }
 
 DataObject*
-CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isFloatNotComplex, int size)
+CDC_HMV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool magnitudeOnly, int size)
 {
 	options = options;
 	DataObject* newHMV = DataObject_create(dataObjectName, parent, 0);
 
 	DataAttribute* har = DataAttribute_create("har", (ModelNode*)newHMV, IEC61850_CONSTRUCTED, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, size, 0);
 	CAC_AnalogueValue_create("mag", (ModelNode*)har, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, false);
-	if (!isFloatNotComplex)
+	if (!magnitudeOnly)
 		CAC_AnalogueValue_create("ang", (ModelNode*)har, IEC61850_FC_MX, TRG_OPT_DATA_CHANGED, false);
 
-	DataAttribute* numHar = DataAttribute_create("numHar", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+	DataAttribute* numHar = DataAttribute_create("numHar", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, 0, 0, 0);
 	numHar->mmsValue = MmsValue_newIntegerFromInt16(size);
 
-	DataAttribute_create("rmsCyc", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
-	DataAttribute_create("frequency", (ModelNode*)newHMV, IEC61850_FLOAT32, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+	DataAttribute_create("rmsCyc", (ModelNode*)newHMV, IEC61850_INT16U, IEC61850_FC_CF, 0, 0, 0);
+	DataAttribute_create("frequency", (ModelNode*)newHMV, IEC61850_FLOAT32, IEC61850_FC_CF, 0, 0, 0);
 
 	CDC_addTimeQuality(newHMV, IEC61850_FC_MX);
 
@@ -551,10 +551,10 @@ CDC_SAV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
         CAC_ScaledValueConfig_create("sVC", (ModelNode*) newSAV);
 
     if (options & CDC_OPTION_MIN)
-        CAC_AnalogueValue_create("min", (ModelNode*) newSAV, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+        CAC_AnalogueValue_create("min", (ModelNode*) newSAV, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     if (options & CDC_OPTION_MAX)
-        CAC_AnalogueValue_create("max", (ModelNode*) newSAV, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+        CAC_AnalogueValue_create("max", (ModelNode*) newSAV, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     CDC_addStandardOptions(newSAV, options);
 
@@ -588,7 +588,7 @@ static void
 addControls(DataObject* parent, DataAttributeType type, uint32_t controlOptions)
 {
     DataAttribute* ctlModel =
-            DataAttribute_create("ctlModel", (ModelNode*) parent, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+            DataAttribute_create("ctlModel", (ModelNode*) parent, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     int controlModel = controlOptions & 0x07;
 
@@ -691,7 +691,7 @@ static void
 addAnalogControls(DataObject* parent, uint32_t controlOptions, bool isIntegerNotFloat)
 {
     DataAttribute* ctlModel =
-            DataAttribute_create("ctlModel", (ModelNode*) parent, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+            DataAttribute_create("ctlModel", (ModelNode*) parent, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     int controlModel = controlOptions & 0x07;
 
@@ -840,7 +840,7 @@ CDC_BSC_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
     CAC_ValWithTrans_create("valWTr", (ModelNode*) newBSC, IEC61850_FC_ST, TRG_OPT_DATA_CHANGED, hasTransientIndicator);
     CDC_addTimeQuality(newBSC, IEC61850_FC_ST);
 
-    DataAttribute_create("persistent", (ModelNode*) newBSC, IEC61850_BOOLEAN, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+    DataAttribute_create("persistent", (ModelNode*) newBSC, IEC61850_BOOLEAN, IEC61850_FC_CF, 0, 0, 0);
 
     addControls(newBSC, IEC61850_CODEDENUM, controlOptions);
 
@@ -981,7 +981,7 @@ CDC_WYE_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
     CDC_CMV_create("res", (ModelNode*) newWYE, options);
 
     if (options & CDC_OPTION_ANGLE_REF)
-        DataAttribute_create("angRef", (ModelNode*) newWYE, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+        DataAttribute_create("angRef", (ModelNode*) newWYE, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     CDC_addStandardOptions(newWYE, options);
 
@@ -1000,7 +1000,7 @@ CDC_DEL_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
     CDC_CMV_create("phsCA", (ModelNode*) newDEL, options);
 
     if (options & CDC_OPTION_ANGLE_REF)
-        DataAttribute_create("angRef", (ModelNode*) newDEL, IEC61850_ENUMERATED, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, 0, 0);
+        DataAttribute_create("angRef", (ModelNode*) newDEL, IEC61850_ENUMERATED, IEC61850_FC_CF, 0, 0, 0);
 
     CDC_addStandardOptions(newDEL, options);
 
@@ -1084,13 +1084,13 @@ CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
         CAC_ScaledValueConfig_create("sVC", (ModelNode*) newASG);
 
     if (options & CDC_OPTION_MIN)
-        CAC_AnalogueValue_create("minVal", (ModelNode*) newASG, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+        CAC_AnalogueValue_create("minVal", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     if (options & CDC_OPTION_MAX)
-        CAC_AnalogueValue_create("maxVal", (ModelNode*) newASG, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+        CAC_AnalogueValue_create("maxVal", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     if (options & CDC_OPTION_STEP_SIZE)
-        CAC_AnalogueValue_create("stepSize", (ModelNode*) newASG, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+        CAC_AnalogueValue_create("stepSize", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     CDC_addStandardOptions(newASG, options);
 
@@ -1129,10 +1129,10 @@ CDC_SPV_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
         CAC_Unit_create("units", (ModelNode*) newSPV, options & CDC_OPTION_UNIT_MULTIPLIER);
 
     if (options & CDC_OPTION_MIN)
-        CAC_AnalogueValue_create("minVal", (ModelNode*) newSPV, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, false);
+        CAC_AnalogueValue_create("minVal", (ModelNode*) newSPV, IEC61850_FC_CF, 0, false);
 
     if (options & CDC_OPTION_MAX)
-        CAC_AnalogueValue_create("maxVal", (ModelNode*) newSPV, IEC61850_FC_CF, TRG_OPT_DATA_CHANGED, false);
+        CAC_AnalogueValue_create("maxVal", (ModelNode*) newSPV, IEC61850_FC_CF, 0, false);
 
     if (wpOptions & CDC_OPTION_61400_SP_ACS)
         DataAttribute_create("spAcs", (ModelNode*) newSPV, IEC61850_CODEDENUM, IEC61850_FC_CF, 0, 0, 0);

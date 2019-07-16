@@ -1009,11 +1009,25 @@ CDC_DEL_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 
 
 DataObject*
-CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
+CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable))
+{
+DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
+
+eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_BOOLEAN, cf, TRG_OPT_DATA_CHANGED, 0, 0);
+
+CDC_addStandardOptions(newSPG, options);
+
+return newSPG;
+}
+
+DataObject*
+CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable)
 {
     DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
 
-    DataAttribute_create("setVal", (ModelNode*) newSPG, IEC61850_BOOLEAN, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_VISIBLE_STRING_255, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     CDC_addStandardOptions(newSPG, options);
 
@@ -1021,24 +1035,12 @@ CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 }
 
 DataObject*
-CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
-{
-    DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
-
-    DataAttribute_create("setVal", (ModelNode*) newSPG, IEC61850_VISIBLE_STRING_255, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
-
-    CDC_addStandardOptions(newSPG, options);
-
-    return newSPG;
-}
-
-
-DataObject*
-CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
+CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable)
 {
     DataObject* newENG = DataObject_create(dataObjectName, parent, 0);
 
-    DataAttribute_create("setVal", (ModelNode*) newENG, IEC61850_ENUMERATED, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    DataAttribute_create("setVal", (ModelNode*)newENG, IEC61850_ENUMERATED, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     CDC_addStandardOptions(newENG, options);
 
@@ -1046,23 +1048,24 @@ CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 }
 
 DataObject*
-CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
+CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable)
 {
     DataObject* newING = DataObject_create(dataObjectName, parent, 0);
 
-    DataAttribute_create("setVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, 0, 0);
+    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    DataAttribute_create("setVal", (ModelNode*)newING, IEC61850_INT32, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     if (options & CDC_OPTION_UNIT)
-        CAC_Unit_create("units", (ModelNode*) newING, options & CDC_OPTION_UNIT_MULTIPLIER);
+        CAC_Unit_create("units", (ModelNode*)newING, options & CDC_OPTION_UNIT_MULTIPLIER);
 
     if (options & CDC_OPTION_MIN)
-		DataAttribute_create("minVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("minVal", (ModelNode*)newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
 
     if (options & CDC_OPTION_MAX)
-		DataAttribute_create("maxVal", (ModelNode*) newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("maxVal", (ModelNode*)newING, IEC61850_INT32, IEC61850_FC_CF, 0, 0, 0);
 
     if (options & CDC_OPTION_STEP_SIZE)
-		DataAttribute_create("stepSize", (ModelNode*) newING, IEC61850_INT32U, IEC61850_FC_CF, 0, 0, 0);
+        DataAttribute_create("stepSize", (ModelNode*)newING, IEC61850_INT32U, IEC61850_FC_CF, 0, 0, 0);
 
     CDC_addStandardOptions(newING, options);
 
@@ -1071,26 +1074,27 @@ CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 }
 
 DataObject*
-CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isIntegerNotFloat)
+CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isIntegerNotFloat, bool isGrouped, bool isEditable)
 {
     DataObject* newASG = DataObject_create(dataObjectName, parent, 0);
 
-    CAC_AnalogueValue_create("setMag", (ModelNode*) newASG, IEC61850_FC_SP, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
+    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    CAC_AnalogueValue_create("setMag", (ModelNode*)newASG, cf, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
 
     if (options & CDC_OPTION_UNIT)
-        CAC_Unit_create("units", (ModelNode*) newASG, options & CDC_OPTION_UNIT_MULTIPLIER);
+        CAC_Unit_create("units", (ModelNode*)newASG, options & CDC_OPTION_UNIT_MULTIPLIER);
 
     if (options & CDC_OPTION_AC_SCAV)
-        CAC_ScaledValueConfig_create("sVC", (ModelNode*) newASG);
+        CAC_ScaledValueConfig_create("sVC", (ModelNode*)newASG);
 
     if (options & CDC_OPTION_MIN)
-        CAC_AnalogueValue_create("minVal", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
+        CAC_AnalogueValue_create("minVal", (ModelNode*)newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     if (options & CDC_OPTION_MAX)
-        CAC_AnalogueValue_create("maxVal", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
+        CAC_AnalogueValue_create("maxVal", (ModelNode*)newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     if (options & CDC_OPTION_STEP_SIZE)
-        CAC_AnalogueValue_create("stepSize", (ModelNode*) newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
+        CAC_AnalogueValue_create("stepSize", (ModelNode*)newASG, IEC61850_FC_CF, 0, isIntegerNotFloat);
 
     CDC_addStandardOptions(newASG, options);
 

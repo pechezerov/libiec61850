@@ -351,9 +351,11 @@ CDC_ACT_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  * \param dataObjectName the name of the new object
  * \param parent the parent of the new data object (either a LogicalNode or another DataObject)
  * \param options bit mask to encode required optional elements
+ * \param isGrouped specifies if setting need to be included in setting group
+ * \param isEditable specifies if setting can maintain multiple grouped values  
  */
 DataObject*
-CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
+CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable);
 
 /**
  * \brief Visible string setting (VSG)
@@ -361,9 +363,11 @@ CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  * \param dataObjectName the name of the new object
  * \param parent the parent of the new data object (either a LogicalNode or another DataObject)
  * \param options bit mask to encode required optional elements
+ * \param isGrouped specifies if setting need to be included in setting group
+ * \param isEditable specifies if setting can maintain multiple grouped values
  */
 DataObject*
-CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
+CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable);
 
 /**
  * \brief Enumerated status setting (ENG)
@@ -371,9 +375,11 @@ CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  * \param dataObjectName the name of the new object
  * \param parent the parent of the new data object (either a LogicalNode or another DataObject)
  * \param options bit mask to encode required optional elements
+ * \param isGrouped specifies if setting need to be included in setting group
+ * \param isEditable specifies if setting can maintain multiple grouped values
  */
 DataObject*
-CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
+CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable);
 
 /**
  * \brief Integer status setting (ING)
@@ -387,7 +393,7 @@ CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  *
  */
 DataObject*
-CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
+CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable);
 
 /**
  * \brief Analogue Setting (ASG)
@@ -401,7 +407,7 @@ CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options);
  *
  */
 DataObject*
-CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isIntegerNotFloat);
+CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isIntegerNotFloat, bool isGrouped, bool isEditable);
 
 /**
  * \brief Phase to ground/neutral related measured values of a three-phase system (WYE)

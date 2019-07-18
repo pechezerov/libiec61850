@@ -1013,7 +1013,7 @@ CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
 {
     DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
 
-    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    enum eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
     DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_BOOLEAN, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     CDC_addStandardOptions(newSPG, options);
@@ -1026,7 +1026,7 @@ CDC_VSG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
 {
     DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
 
-    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    enum eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
     DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_VISIBLE_STRING_255, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     CDC_addStandardOptions(newSPG, options);
@@ -1039,7 +1039,7 @@ CDC_ENG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
 {
     DataObject* newENG = DataObject_create(dataObjectName, parent, 0);
 
-    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    enum eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
     DataAttribute_create("setVal", (ModelNode*)newENG, IEC61850_ENUMERATED, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     CDC_addStandardOptions(newENG, options);
@@ -1052,7 +1052,7 @@ CDC_ING_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
 {
     DataObject* newING = DataObject_create(dataObjectName, parent, 0);
 
-    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    enum eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
     DataAttribute_create("setVal", (ModelNode*)newING, IEC61850_INT32, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
     if (options & CDC_OPTION_UNIT)
@@ -1078,7 +1078,7 @@ CDC_ASG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, 
 {
     DataObject* newASG = DataObject_create(dataObjectName, parent, 0);
 
-    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    enum eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
     CAC_AnalogueValue_create("setMag", (ModelNode*)newASG, cf, TRG_OPT_DATA_CHANGED, isIntegerNotFloat);
 
     if (options & CDC_OPTION_UNIT)

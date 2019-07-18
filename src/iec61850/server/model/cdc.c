@@ -1009,16 +1009,16 @@ CDC_DEL_create(const char* dataObjectName, ModelNode* parent, uint32_t options)
 
 
 DataObject*
-CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable))
+CDC_SPG_create(const char* dataObjectName, ModelNode* parent, uint32_t options, bool isGrouped, bool isEditable)
 {
-DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
+    DataObject* newSPG = DataObject_create(dataObjectName, parent, 0);
 
-eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
-DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_BOOLEAN, cf, TRG_OPT_DATA_CHANGED, 0, 0);
+    eFunctionalConstraint cf = isGrouped ? (isEditable ? IEC61850_FC_SE : IEC61850_FC_SG) : IEC61850_FC_SP;
+    DataAttribute_create("setVal", (ModelNode*)newSPG, IEC61850_BOOLEAN, cf, TRG_OPT_DATA_CHANGED, 0, 0);
 
-CDC_addStandardOptions(newSPG, options);
+    CDC_addStandardOptions(newSPG, options);
 
-return newSPG;
+    return newSPG;
 }
 
 DataObject*

@@ -676,6 +676,9 @@ sendReportSegment(ReportControl* self, bool isIntegrity, bool isGI)
 
     MmsServer_releaseTransmitBuffer(self->server->mmsServer);
 
+    if (self->clientConnection == NULL)
+        return false;
+    
     IsoConnection_unlock(self->clientConnection->isoConnection);
 
     if (moreFollows == false) {

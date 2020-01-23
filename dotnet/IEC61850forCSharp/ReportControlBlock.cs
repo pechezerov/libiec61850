@@ -473,7 +473,7 @@ namespace IEC61850
 
                 MmsValue entryID = MmsValue.NewOctetString(entryId.Length);
 
-                entryID.setOctetString(entryId);
+                entryID.SetOctetString(entryId);
 
                 ClientReportControlBlock_setEntryId(self, entryID.valueReference);
 

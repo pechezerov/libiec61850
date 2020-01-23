@@ -647,7 +647,46 @@ namespace IEC61850
 			NONE = -1
 		}
 
-		public enum ControlAddCause {
+        public enum DbPos
+        {
+            Intermediate,
+            Off,
+            On,
+            Error
+        }
+
+        public enum PresenceCondition
+        {
+            //[Description("Член является обязательным (mandatory)")]
+            M,
+            //[Description("Член является необязательным (optional)")]
+            O,
+            Omulti,
+            //[Description("Член является элементом группы, и наличие хотя бы одного члена из группы является обязательным")]
+            AtLeastOne,
+            //[Description("Член является элементом группы, и обязательным является наличие не более чем одного члена из группы")]
+            AtMostOne,
+            //[Description("Член является элементом группы, и обязательным яявляется либо одновременное наличие всех членов, либо их одновременное отсутствие")]
+            AllOrNonePerGroup,
+            AllOnlyOneGroup,
+            MO,
+            MF,
+            OF,
+            OmultiRange,
+            MFsubst,
+            MOln0,
+            MFln0,
+            MOlnNs,
+            MOcdcNs,
+            MOdataNs,
+            MFscaledAV,
+            MFscaledMagV,
+            MFscaledAngV,
+            MOrms,
+            MOoperTm
+        }
+
+        public enum ControlAddCause {
 			ADD_CAUSE_UNKNOWN = 0,
 			ADD_CAUSE_NOT_SUPPORTED = 1,
 			ADD_CAUSE_BLOCKED_BY_SWITCHING_HIERARCHY = 2,
